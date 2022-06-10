@@ -6,7 +6,7 @@ const MULTIPLY = "x";
 const DIVIDE = "÷";
 
 class Node {
-  constructor(operator, value, left, right) {
+  constructor(operator, value, left = null, right = null) {
     this.operator = operator;
     this.value = value;
     this.left = left;
@@ -28,16 +28,20 @@ class Node {
     }
   }
 
+  #formatLeftAndRightWith(operator) {
+    return `(${this.left.toString()} ${operator} ${this.right.toString()})`;
+  }
+
   toString() {
     switch (this.operator) {
       case ADD:
-        return `(${this.left.toString()} + ${this.right.toString()})`;
+        return this.#formatLeftAndRightWith(ADD);
       case SUBTRACT:
-        return `(${this.left.toString()} - ${this.right.toString()})`;
+        return this.#formatLeftAndRightWith(SUBTRACT);
       case MULTIPLY:
-        return `(${this.left.toString()} x ${this.right.toString()})`;
+        return this.#formatLeftAndRightWith(MULTIPLY);
       case DIVIDE:
-        return `(${this.left.toString()} ÷ ${this.right.toString()})`;
+        return this.#formatLeftAndRightWith(DIVIDE);
       default:
         return this.value.toString();
     }
@@ -50,15 +54,10 @@ const tree = new Node(
   new Node(
     ADD,
     null,
-    new Node("", 7, null, null),
-    new Node(
-      MULTIPLY,
-      null,
-      new Node(SUBTRACT, null, new Node("", 3, null, null), new Node("", 2, null, null)),
-      new Node("", 5, null, null)
-    )
+    new Node("", 7),
+    new Node(MULTIPLY, null, new Node(SUBTRACT, null, new Node("", 3), new Node("", 2)), new Node("", 5))
   ),
-  new Node("", 6, null, null)
+  new Node("", 6)
 );
 
 assert.strictEqual("((7 + ((3 - 2) x 5)) ÷ 6)", tree.toString());
