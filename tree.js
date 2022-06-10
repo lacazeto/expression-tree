@@ -1,56 +1,64 @@
 const assert = require("assert");
 
-const Node = (operator, value, left, right) => {
-  const result = function () {
+const ADD = "+";
+const SUBTRACT = "-";
+const MULTIPLY = "x";
+const DIVIDE = "÷";
+
+class Node {
+  constructor(operator, value, left, right) {
+    this.operator = operator;
+    this.value = value;
+    this.left = left;
+    this.right = right;
+  }
+
+  result() {
     switch (this.operator) {
-      case "+":
-        return left.result() + right.result();
-      case "-":
-        return left.result() - right.result();
-      case "x":
-        return left.result() * right.result();
-      case "÷":
-        return left.result() / right.result();
+      case ADD:
+        return this.left.result() + this.right.result();
+      case SUBTRACT:
+        return this.left.result() - this.right.result();
+      case MULTIPLY:
+        return this.left.result() * this.right.result();
+      case DIVIDE:
+        return this.left.result() / this.right.result();
       default:
-        return value;
+        return this.value;
     }
-  };
+  }
 
-  const toString = function () {
+  toString() {
     switch (this.operator) {
-      case "+":
-        return `(${left.toString()} + ${right.toString()})`;
-      case "-":
-        return `(${left.toString()} - ${right.toString()})`;
-      case "x":
-        return `(${left.toString()} x ${right.toString()})`;
-      case "÷":
-        return `(${left.toString()} ÷ ${right.toString()})`;
+      case ADD:
+        return `(${this.left.toString()} + ${this.right.toString()})`;
+      case SUBTRACT:
+        return `(${this.left.toString()} - ${this.right.toString()})`;
+      case MULTIPLY:
+        return `(${this.left.toString()} x ${this.right.toString()})`;
+      case DIVIDE:
+        return `(${this.left.toString()} ÷ ${this.right.toString()})`;
       default:
-        return value.toString();
+        return this.value.toString();
     }
-  };
+  }
+}
 
-  return {
-    operator,
-    value,
-    left,
-    right,
-    result,
-    toString,
-  };
-};
-
-const tree = Node(
-  "÷",
+const tree = new Node(
+  DIVIDE,
   null,
-  Node(
-    "+",
+  new Node(
+    ADD,
     null,
-    Node("", 7, null, null),
-    Node("x", null, Node("-", null, Node("", 3, null, null), Node("", 2, null, null)), Node("", 5, null, null))
+    new Node("", 7, null, null),
+    new Node(
+      MULTIPLY,
+      null,
+      new Node(SUBTRACT, null, new Node("", 3, null, null), new Node("", 2, null, null)),
+      new Node("", 5, null, null)
+    )
   ),
-  Node("", 6, null, null)
+  new Node("", 6, null, null)
 );
 
 assert.strictEqual("((7 + ((3 - 2) x 5)) ÷ 6)", tree.toString());
